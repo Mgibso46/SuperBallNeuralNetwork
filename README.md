@@ -10,3 +10,16 @@ Here is the documentation for [NEAT](https://neat-python.readthedocs.io/en/lates
 * `sb-player` - Dr. planks superball executable
 
 ## Installation
+```bash
+pip install -r requirements.txt
+```
+To run:
+```bash
+python test.py
+```
+
+## What needs to be changed
+To tune the GA and Net, change the settings in the config file.  
+To change the fitness function modify `eval_genome` in `test.py`.
+
+##### NOTE: THERE MAY STILL BE BUGS and test.py is just a starting file it will need updates for sure.
