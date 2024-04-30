@@ -2,7 +2,7 @@ import neat
 import pickle
 import sys
 import math
-from disjoint_sets import DisjointSets
+from scipy.cluster.hierarchy import DisjointSet
 
 
 def default_swap(board):
@@ -43,8 +43,8 @@ def main():
         #no[4] = 0 if no[4] < 0 else (9 if no[4] > 9 else no[4])
 
         game_input = f"SWAP {no[1]} {no[2]} {no[3]} {no[4]}" if no[0] > 0 else f"SCORE {no[1]} {no[2]}"
-        with open('tmp.output', 'a') as f:
-            f.write(f"{game_input}\n")
+        #with open('tmp.output', 'a') as f:
+        #    f.write(f"{game_input}\n")
             
         i = no[1]*10+no[2]
         j = no[3]*10+no[4]
@@ -78,23 +78,21 @@ def main():
                 default_swap(net_input)
                 return
 
-            ds = DisjointSets()
+            ds = DisjointSet([i for i in range(len(net_input)) if chr(net_input[i]) not in ['*', ',']])
             for i in range(len(net_input)):
                 if chr(net_input[i]) in ['*','.']:
                     continue
-                if i % 10 != 9:
-                    if net_input[i] == net_input[i+1]:
-                        ds.union(i, i+1)
-                if int(i/10) != 7:
-                    if net_input[i] == net_input[i+10]:
-                        ds.union(i, i+10)
+                row = i // 10
+                col = i % 10
+                if col < 9 and net_input[i] == net_input[i + 1]:
+                    ds.merge(i, i+1)
+                if row < 7 and net_input[i] == net_input[i + 10]:
+                    ds.merge(i, i+10)
 
-                if ds.get_set_size(i) < 1:
-                   # with open('tmp.output', 'a') as f:
-                   #     f.write(f"default swap on SCORE SIZE\n")
-                    net_input = [chr(i) for i in net_input]
-                    default_swap(net_input)
-                    return
+            if len(ds.subset(no[1]*10+no[2])) < 2:
+                net_input = [chr(i) for i in net_input]
+                default_swap(net_input)
+                return
         print(game_input)
 
 if  __name__ == '__main__':
