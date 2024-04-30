@@ -19,8 +19,7 @@ def default_swap(board):
     
     print(f"SWAP {int(x/10)} {x%10} {int(y/10)} {y%10}")
 def main():
-    with open('tmp.fitness', 'w') as f:
-        f.write('0')
+    
     
     with open('genome.pkl', 'rb') as f:
         genome = pickle.load(f)
@@ -44,15 +43,15 @@ def main():
         #no[4] = 0 if no[4] < 0 else (9 if no[4] > 9 else no[4])
 
         game_input = f"SWAP {no[1]} {no[2]} {no[3]} {no[4]}" if no[0] > 0 else f"SCORE {no[1]} {no[2]}"
-        #with open('tmp.output', 'a') as f:
-        #    f.write(f"{game_input}\n")
-
+        with open('tmp.output', 'a') as f:
+            f.write(f"{game_input}\n")
+            
         i = no[1]*10+no[2]
         j = no[3]*10+no[4]
         #with open('tmp.output', 'a') as f:
         #    f.write(f"{no[1]} {i} {chr(net_input[i])} {(chr(net_input[i]) in ['*', '.'])} {j} {chr(net_input[j])} {chr(net_input[j]) in ['*','.']}\n")
 
-        if no[0] == 1 and (chr(net_input[i]) in ['*', '.'] or chr(net_input[j]) in ['*','.']):
+        if no[0] == 1 and (chr(net_input[i]) in ['*', '.'] or chr(net_input[j]) in ['*','.'] or i == j):
             #with open('tmp.output', 'a') as f:
             #    f.write(f"default swap on SWAP\n")
             with open('tmp.fitness', 'r') as f:
@@ -66,6 +65,8 @@ def main():
             default_swap(net_input)
             return
         elif no[0] == 0:
+            #with open('tmp.output', 'a') as f:
+            #    f.write(f"default swap on score\n")
             scoring_range = [20, 21, 28, 29, 30, 31, 38, 39, 40, 41, 48, 49, 50, 51, 58, 59]
             index = no[1]*10+no[2]
             #with open('tmp.output', 'a') as f:

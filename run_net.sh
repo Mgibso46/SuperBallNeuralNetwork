@@ -1,1 +1,1 @@
-python run_net.py
+python3 run_net.py
