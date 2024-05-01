@@ -7,7 +7,14 @@ from scipy.cluster.hierarchy import DisjointSet
 
 def default_swap(board):
     x = 0
-    y = 0
+    y = 0            
+    with open('tmp.fitness', 'r') as f:
+            line = f.readline()
+            words = line.split()
+            bad_moves = words[0]
+    with open('tmp.fitness', 'w') as f:
+        f.write(f"{int(bad_moves)+1}")
+
     for i, val in enumerate(board):
         if val != '.' and val != '*':
             x = i
@@ -51,15 +58,23 @@ def main():
         #with open('tmp.output', 'a') as f:
         #    f.write(f"{no[1]} {i} {chr(net_input[i])} {(chr(net_input[i]) in ['*', '.'])} {j} {chr(net_input[j])} {chr(net_input[j]) in ['*','.']}\n")
 
+        if no[0] == 1:
+            with open('swapCount.tmp', 'r') as f:
+                line = f.readline()
+                words = line.split()
+                swapA = words[0]
+            with open(f"swapCount.tmp", "w") as f:
+                f.write(f"{int(swapA)+1}")
+        elif no[0] == 0:        
+            with open('scoreCount.tmp', 'r') as f:
+                line = f.readline()
+                words = line.split()
+                scoreA = words[0]
+            with open(f"scoreCount.tmp", 'w') as f:
+                f.write(f"{int(scoreA)+1}")
         if no[0] == 1 and (chr(net_input[i]) in ['*', '.'] or chr(net_input[j]) in ['*','.'] or i == j):
             #with open('tmp.output', 'a') as f:
             #    f.write(f"default swap on SWAP\n")
-            with open('tmp.fitness', 'r') as f:
-                line = f.readline()
-                words = line.split()
-                bad_moves = words[0]
-            with open('tmp.fitness', 'w') as f:
-                f.write(f"{int(bad_moves)+1}")
 
             net_input = [chr(i) for i in net_input]
             default_swap(net_input)
@@ -76,6 +91,7 @@ def main():
             #        f.write(f"default swap on SCORE ZONE\n")
                 net_input = [chr(i) for i in net_input]
                 default_swap(net_input)
+
                 return
 
             ds = DisjointSet([i for i in range(len(net_input)) if chr(net_input[i]) not in ['*', ',']])
@@ -88,7 +104,6 @@ def main():
                     ds.merge(i, i+1)
                 if row < 7 and net_input[i] == net_input[i + 10]:
                     ds.merge(i, i+10)
-
             if len(ds.subset(no[1]*10+no[2])) < 2:
                 net_input = [chr(i) for i in net_input]
                 default_swap(net_input)

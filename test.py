@@ -27,6 +27,10 @@ def play_superball(net):
     superball_path = "./sb-player"
     with open('tmp.fitness', 'w') as f:
         f.write('0')
+    with open('swapCount.tmp', 'w') as f:
+        f.write('0')
+    with open('scoreCount.tmp', 'w') as f:
+        f.write('0')
     command = [superball_path, '8', '10', '1', 'pbyrg', './run_net.sh', 'n', 'n', '-']  # Correct the command to run the subprocess
     with subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
         lines = [line for line in process.stdout]
@@ -41,8 +45,24 @@ def play_superball(net):
             print("printing bad moves")
             print(bad_moves)
             score = int(cleaned_text)
-            fitnesstmp = (score+1) * (100/(bad_moves+1))
+            if bad_moves >= 1:
+                fitnesstmp = 50 - bad_moves
+            else:
+                fitnesstmp = 50 + score*5
             print(fitnesstmp)
+        with open('swapCount.tmp', 'r') as f:
+            lines = f.readline()
+            words = lines.split()
+            swapNum = int(words[0])
+        with open('scoreCount.tmp', 'r') as f:
+            lines = f.readline()
+            words = lines.split()
+            scoreNum = int(words[0])
+            
+        
+        with open(f"generations.csv", "a") as f:
+            f.write(f"{bad_moves}, {swapNum}, {scoreNum}, ")
+        
         return fitnesstmp
 
 
@@ -52,8 +72,8 @@ def eval_genomes(genomes, config):
         with open(f"genome.pkl", "wb") as f:
             pickle.dump(genome, f)
         avg_score = np.average([play_superball(net) for _ in range(2)])        
-        with open(f"generations.tx", "a") as f:
-            f.write(f"{genome_id}: {avg_score}\n")
+        with open(f"generations.csv", "a") as f:
+            f.write(f"{genome_id}, {avg_score}\n")
         genome.fitness = avg_score
 
 def main():
